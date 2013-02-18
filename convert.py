@@ -11,16 +11,6 @@ import os
 import fnmatch
 import datetime
 
-#with open("MCP_Data_Report_14-02-2013 00_00_00.xls", "r") as f:
-#    lines = f.readlines()
-'''def get_chart_headers(wb):    
-    #wb = xlrd.open_workbook('/home/martin/dev/workspace/NordPoolSpot_DL/src/MCP_Data_Report_14-02-2013 00_00_00.xls')
-    sh = wb.sheet_by_index(0)
-    headers = []
-    for i in range(0,12):
-        if i not in [6]: # skip unnecessary header rows
-            headers.append(sh.cell_value(rowx=i,colx=0))
-    return headers'''
     
 def get_chart_data(wb, col=1):
     #wb = xlrd.open_workbook('/home/martin/dev/workspace/NordPoolSpot_DL/src/MCP_Data_Report_14-02-2013 00_00_00.xls')
@@ -111,14 +101,12 @@ for file in os.listdir(xls_path):
     if fnmatch.fnmatch(file, '[MCP_Data_Report]*.xls'):
         files.append(xls_path + file)
 
-'''for item in files:
-    print item
-print len(files)
-'''
+
 if len(files) > 0:
     for file in files:
         print file
         wb = xlrd.open_workbook(file)
+        sh = wb.sheet_by_index(0)
         '''Check if output files exist. Create templates if they do not exist'''
         if len(os.listdir(csv_path)) == 0:
             write_string(['time','currency','price_object_id','accepted_blocks_buy','accepted_blocks_sell'] + 
@@ -126,12 +114,12 @@ if len(files) > 0:
                          ['min_volume','max_volume'], csv_path + chart_data_file)
             write_string(['time','price', 'volume'], csv_path + sell_price_volume_file)
             write_string(['time','price', 'volume'], csv_path + buy_price_volume_file)
-#        create_templates(get_chart_headers(wb), 'out.csv')
+
         i = 1
         buy_curve_data = []
         sell_curve_data = []
         chart_data = []
-        while i < 48:
+        while i <= sh.ncols:
             buy_curve_data += get_data(wb, get_chart_data(wb, col=i)[0], col=i)[0]
             sell_curve_data += get_data(wb, get_chart_data(wb, col=i)[0], col=i)[1]
             chart_data.append(get_chart_data(wb, col=i))
