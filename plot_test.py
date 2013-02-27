@@ -1,23 +1,35 @@
-'''
-Created on Feb 19, 2013
-
-@author: martin
-'''
-import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate.interpolate import interp1d
+import numpy as np
+from scipy.interpolate import InterpolatedUnivariateSpline 
+from numpy.lib.function_base import interp
+from numpy.core.function_base import linspace
 
-import time
-from matplotlib.pyplot import draw, ion, plot
-from numpy.core.numeric import arange
-from numpy.ma.core import sin
-from scipy.constants.constants import pi
+# given values
+'''xi = np.array([0.2, 0.5, 0.7, 0.9])
+yi = np.array([0.3, -0.1, 0.2, 0.1])
+# positions to inter/extrapolate
+x = np.linspace(0,1,50)
+# spline order: 1 linear, 2 quadratic, 3 cubic ... 
+order = 1 
+# do inter/extrapolation
+s = InterpolatedUnivariateSpline(xi, yi, k=order)
+y = s(x)
 
-ion() 
-tstart = time.time()               # for profiling
-x_buy = arange(0,2*pi,0.01)            # x_buy-array
-line, = plot(x_buy,sin(x_buy))
-for i in arange(1,200):
-     line.set_ydata(sin(x_buy+i/10.0))  # update the data
-     draw()                         # redraw the canvas
-print('FPS:' , 200/(time.time()-tstart))
+# example showing the interpolation for linear, quadratic and cubic interpolation
+plt.figure()
+plt.plot(xi,yi)
+for order in range(1,4):
+    s = InterpolatedUnivariateSpline(xi, yi, k=order)
+    y = s(x)
+    plt.plot(x,y)
+plt.show()
+'''
+
+
+xp = [1,2,3,4,5]
+fp = [1,4,9,16,25]
+x = linspace(1,5, 100)
+
+#f = interp(x, xp, fp)
+f = lambda x: interp(x, xp, fp, left=999.0, right=-999.0)
+print(f([4,5,6]))
