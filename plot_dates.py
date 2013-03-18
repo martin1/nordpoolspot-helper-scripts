@@ -7,8 +7,8 @@ from scipy.stats.stats import pearsonr
 from scipy.spatial.distance import euclidean
 import csv
 
-start_date = '2011-12-01 00:00:00'
-end_date = '2011-12-31 23:00:00'
+start_date = '2011-02-15 00:00:00'
+end_date = '2011-02-20 23:00:00'
 
 buy_prices, buy_volumes, times = get_data(start_date, end_date, type='buy')
 sell_prices, sell_volumes, _ = get_data(start_date, end_date, type='sell')
@@ -53,10 +53,11 @@ for i in range(0, len(buy_prices)):
     
     intersect_x, intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell, time=str(times[i][0]))
     
-    buy_volumes_min.append(min(buy_volumes[i]))
+    '''buy_volumes_min.append(min(buy_volumes[i]))
     buy_volumes_max.append(max(buy_volumes[i]))
     sell_volumes_min.append(min(sell_volumes[i]))
     sell_volumes_max.append(max(sell_volumes[i]))
+    '''
     
     #Line lengths
     length = 0
@@ -79,7 +80,7 @@ for i in range(0, len(buy_prices)):
     volumes.append(intersect_x)
     prices.append(intersect_y)
 
-    csv_rows_buy.append([str(times[i][0]), min(buy_volumes[i]), max(buy_volumes[i]), max(buy_volumes[i])-min(buy_volumes[i]), length, intersect_x[0], intersect_y[0]])
+    '''csv_rows_buy.append([str(times[i][0]), min(buy_volumes[i]), max(buy_volumes[i]), max(buy_volumes[i])-min(buy_volumes[i]), length, intersect_x[0], intersect_y[0]])
     
     length = 0
     for j in range(0, len(buy_volumes[i])-1):
@@ -87,9 +88,9 @@ for i in range(0, len(buy_prices)):
     sell_lengths.append(length)
     
     csv_rows_sell.append([str(times[i][0]), min(sell_volumes[i]), max(sell_volumes[i]), max(sell_volumes[i])-min(sell_volumes[i]), length, intersect_x[0], intersect_y[0]])
-
+    '''
 #write data to csv
-with open("2011_buy_curve_data.csv", 'ab') as csvfile:
+'''with open("2011_buy_curve_data.csv", 'ab') as csvfile:
         wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
         wr.writerow(["time", "min_volume", "max_volume", "volume_difference", "curve_length", "system_price", "system_volume"])
         for item in csv_rows_buy:
@@ -102,10 +103,10 @@ with open("2011_sell_curve_data.csv", 'ab') as csvfile:
         for item in csv_rows_sell:
             wr.writerow(item)
         csvfile.close()
-
+'''
     
 
-'''times_num = [date2num(t) for t in times]  
+times_num = [date2num(t) for t in times]  
 modified_times = [date2num(t) for t in modified_times]
 modified_y = [50 for t in modified_times]  
 fig = figure()
@@ -119,15 +120,16 @@ fig = figure()
 ax = fig.add_subplot(111)
 #ax2 = fig.add_subplot(211)
 #ax.plot_date(times, buy_volume_diff, 'b-')
-ax.plot(times, buy_lengths, 'r-')
-#ax.plot_date(times, sell_volumes_min, 'r-')
-ax.plot_date(times_num[buy_lengths.index(max(buy_lengths))], max(buy_lengths), 'bo')
+ax.plot(volumes, , 'r-')
+ax.plot_date(times, prices, 'r-')
+'''ax.plot_date(times_num[buy_lengths.index(max(buy_lengths))], max(buy_lengths), 'bo')
 ax.plot_date(times_num[buy_lengths.index(min(buy_lengths))], min(buy_lengths), 'bo')
 ax.annotate(str(times[buy_lengths.index(max(buy_lengths))][0]) +','+ str(max(buy_lengths)), xy=(times_num[buy_lengths.index(max(buy_lengths))], max(buy_lengths)), 
             xytext=(times_num[buy_lengths.index(max(buy_lengths))], max(buy_lengths)+200))
 ax.annotate(str(times[buy_lengths.index(min(buy_lengths))][0]) +','+ str(min(buy_lengths)), xy=(times_num[buy_lengths.index(min(buy_lengths))], min(buy_lengths)), 
             xytext=(times_num[buy_lengths.index(min(buy_lengths))], min(buy_lengths)-200))
 ax.set_title("2011 hourly sell curve lengths")
+'''
 #print str(times[buy_volumes_max.index(max(buy_volumes_max))][0]), max(buy_volumes_max)
 #print str(times[buy_volumes_max.index(min(buy_volumes_max))][0]), min(buy_volumes_max)
 #print pearsonr(buy_volumes_min, buy_volumes_max)
@@ -164,4 +166,3 @@ ax.grid(True)
 
 fig.autofmt_xdate()
 show()
-'''

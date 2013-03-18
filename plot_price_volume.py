@@ -11,7 +11,7 @@ from matplotlib.dates import date2num
 #start_date = '2011-02-21 07:00:00'
 #end_date = '2011-02-21 07:00:00'
 
-start_date = '2011-02-21 07:00:00'
+start_date = '2011-02-21 10:00:00'
 end_date = '2011-02-21 10:00:00'
 hour = '01:00:00'
 
@@ -31,7 +31,7 @@ for i in range(0, len(buy_prices)):
     y_buy = [r for r in buy_prices[i]]
 
     x_sell = [r for r in sell_volumes[i]]
-    #x_sell_5000 = [r+5000 for r in x_sell]
+    x_sell_5000 = [r+5000 for r in x_sell]
     
     y_sell = [r for r in sell_prices[i]]
 
@@ -44,7 +44,7 @@ for i in range(0, len(buy_prices)):
     #plt.plot(x_sell, f_sell(x_sell), 'b.')
     #print str(times[i][0])
     intersect_x, intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell, time=str(times[i][0]))
-    #modified_intersect_x, modified_intersect_y = get_intersection_point(x_buy, y_buy, x_sell_5000, y_sell, time=str(times[i][0]))
+    modified_intersect_x, modified_intersect_y = get_intersection_point(x_buy, y_buy, x_sell_5000, y_sell, time=str(times[i][0]))
     
     '''if intersect_y > 150:
         x_sell = [x + 5000 for x in x_sell]
@@ -52,16 +52,19 @@ for i in range(0, len(buy_prices)):
         intersect_x, intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell, time=str(times[i][0]))
     '''    
         
-    #plt.plot(intersect_x, intersect_y, 'ro')
+    plt.plot(intersect_x, intersect_y, 'go')
     plt.plot(x_buy, f_buy(x_buy), 'b-')#, linewidth=0.2, markersize=0.1)
-    #plt.plot(x_sell_5000, f_sell(x_sell), 'r--', label='f_sell + 5000')
-    #plt.plot(modified_intersect_x, modified_intersect_y, 'ro')
-    #print modified_intersect_x, modified_intersect_y
+    plt.plot(x_sell, f_sell(x_sell), 'r-')
+    plt.plot(x_sell_5000, f_sell(x_sell), 'r--', label='f_sell + 5000')
+    plt.plot(modified_intersect_x, modified_intersect_y, 'ro')
+    plt.annotate(str(modified_intersect_x[0])+ ', ' + str(modified_intersect_y[0]), xy=(modified_intersect_x, modified_intersect_y),
+                 xytext=(modified_intersect_x-3000, modified_intersect_y-100))
+    print modified_intersect_x, modified_intersect_y
     #plt.title("2011-02-21 07:00")
     #plt.axes().get_xaxis().set_visible(False)
     #plt.axes().get_yaxis().set_visible(False)
     #plt.plot(x_sell, f_sell(x_sell), 'r-', label='f_sell')#, linewidth=0.2, markersize=0.1)
-    plt.legend(loc='best')
+    #plt.legend(loc='best')
     
 plt.yticks(np.arange(-200, 2000, 100.0))
 #plt.xticks(np.arange(10000, 55001, 5000))
