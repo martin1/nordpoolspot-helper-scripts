@@ -4,7 +4,7 @@ from numpy.lib.function_base import interp
 from scipy.optimize.minpack import fsolve
 
 def get_data(time_start, time_end, type='buy', specified_hour=None) :
-    con = MySQLdb.connect(host='localhost', user = 'root', passwd = 'martyn', db = 'martin_kurgi', port = 3306)
+    con = MySQLdb.connect(host='localhost', user = 'root', passwd = '', db = 'martin', port = 3306)
     cur = con.cursor()
     if specified_hour is None:
         cur.execute("select time from chart_data where time between '" + time_start + "' and '" + time_end + "'")
