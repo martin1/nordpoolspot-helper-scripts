@@ -95,26 +95,35 @@ def get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes):
     for i in range(0, len(buy_prices)):
         x_buy = [r for r in buy_volumes[i]]
         y_buy = [r for r in buy_prices[i]]
+        
         x_sell = [r for r in sell_volumes[i]]
+        x_sell_4900 = [r+4900 for r in x_sell]
+        
         y_sell = [r for r in sell_prices[i]]
         f_buy = lambda x: interp(x, x_buy, y_buy)
         f_sell = lambda x: interp(x, x_sell, y_sell)
         
         intersect_x, intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell)
+        modified_intersect_x, modified_intersect_y = get_intersection_point(x_buy, y_buy, x_sell_4900, y_sell, time=str(times[i][0]))
+        
         volumes.append(intersect_x)
-        prices.append(intersect_y)
+        
+        if intersect_y > 1000:
+            prices.append(modified_intersect_y)
+        else:
+            prices.append(intersect_y)
     
     return volumes, prices
         
-
+    
 ########################################
-start_date = '2011-02-10 10:00:00'
-end_date = '2011-02-26 10:00:00'
+start_date = '2011-01-01 00:00:00'
+end_date = '2011-01-01 00:00:00'
 hour = '01:00:00'
 
 buy_prices, buy_volumes, times = get_data(start_date, end_date, type='buy', specified_hour = None)
 sell_prices, sell_volumes, _ = get_data(start_date, end_date, type='sell', specified_hour = None)
 
 volumes, prices = get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes)
-plot_time_price(times, prices)
-#plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
+#plot_time_price(times, prices)
+plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)

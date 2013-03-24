@@ -30,7 +30,7 @@ def get_data(time_start, time_end, type='buy', specified_hour=None) :
     con.close()
     return prices, volumes, times
 
-def get_intersection_point(buy_x_list, buy_y_list, sell_x_list, sell_y_list):#, time):#, fix_data=True):
+def get_intersection_point(buy_x_list, buy_y_list, sell_x_list, sell_y_list, time=None):#, fix_data=True):
     
     '''if fix_data == True: # apply fix for data
         corrected_data = {'2011-02-21 07:00:00':[48500, 73.32],

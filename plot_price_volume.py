@@ -11,8 +11,8 @@ from matplotlib.dates import date2num
 #start_date = '2011-02-21 07:00:00'
 #end_date = '2011-02-21 07:00:00'
 
-start_date = '2011-02-21 10:00:00'
-end_date = '2011-02-21 10:00:00'
+start_date = '2011-02-21 07:00:00'
+end_date = '2011-02-21 07:00:00'
 hour = '01:00:00'
 
 buy_prices, buy_volumes, times = get_data(start_date, end_date, type='buy', specified_hour = None)
@@ -31,7 +31,7 @@ for i in range(0, len(buy_prices)):
     y_buy = [r for r in buy_prices[i]]
 
     x_sell = [r for r in sell_volumes[i]]
-    x_sell_5000 = [r+5000 for r in x_sell]
+    x_sell_5000 = [r+4900 for r in x_sell]
     
     y_sell = [r for r in sell_prices[i]]
 
