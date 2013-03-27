@@ -25,8 +25,8 @@ def get_data(time_start, time_end, type='buy', specified_hour=None) :
         #print(query)
         cur.execute(query)
         result = cur.fetchall()
-        prices.append([r[0] for r in result])
-        volumes.append([r[1] for r in result])
+        prices.append(sorted([r[0] for r in result], reverse=True))
+        volumes.append(sorted([r[1] for r in result], reverse=False))
     con.close()
     return prices, volumes, times
 
