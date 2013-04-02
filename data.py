@@ -20,7 +20,7 @@ def get_data(time_start, time_end, type='buy', specified_hour=None) :
     volumes = []    
     for time in times:
         time_str = datetime.datetime.strftime(time[0], '%Y-%m-%d %H:%M:%S')
-        print("data:" + time_str)
+        print("data-[" + type + "]-:" + time_str)
         query = "select price, volume from " + db_table + " where time = " + "'"+ time_str + "' order by volume asc"
         #print(query)
         cur.execute(query)
