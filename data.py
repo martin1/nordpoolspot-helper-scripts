@@ -10,6 +10,7 @@ def get_data(time_start, time_end, type='buy', specified_hour=None) :
         cur.execute("select time from chart_data where time between '" + time_start + "' and '" + time_end + "'")
     elif specified_hour is not None:
         cur.execute("select time from chart_data where time between '" + time_start + "' and '" + time_end + "' and time(time) = '" + specified_hour + "'")
+        print "select time from chart_data where time between '" + time_start + "' and '" + time_end + "' and time(time) = '" + specified_hour + "'"
     times = cur.fetchall()
 
     if type == 'buy': #return both buy and sell prices
@@ -25,8 +26,8 @@ def get_data(time_start, time_end, type='buy', specified_hour=None) :
         #print(query)
         cur.execute(query)
         result = cur.fetchall()
-        prices.append(sorted([r[0] for r in result], reverse=True))
-        volumes.append(sorted([r[1] for r in result], reverse=False))
+        prices.append([r[0] for r in result])
+        volumes.append([r[1] for r in result])
     con.close()
     return prices, volumes, times
 

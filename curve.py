@@ -2,9 +2,27 @@ from numpy.core.function_base import linspace
 import matplotlib.pyplot as plt
 from data import *
 from scipy.interpolate import interp1d
+import scipy.stats
+import numpy
+from math import *
 
+class ticker():
+    pass
 
-def get_avg_func(x, y, points=1000):
+def get_mean_function(mean='arithmetic'):
+    if mean == 'arithmetic':
+        return lambda x: numpy.mean(x)
+    if mean == 'geometric':
+        return lambda x: scipy.stats.gmean(x)
+    if mean == 'trimmed':
+        return lambda x: scipy.stats.tmean(x)
+    if mean == 'harmonic':
+        return lambda x: scipy.stats.hmean(x)
+    if mean == 'rms':
+        return lambda x: sqrt(numpy.mean([x_n**2 for x_n in x]))
+        
+
+def get_avg_func(x, y, points=1000, mean='arithmetic'):
     
     y_max = 2000.0
     y_min = -200.0
@@ -13,6 +31,7 @@ def get_avg_func(x, y, points=1000):
     x_avg = list()
     f = list()
     avg_dist = list()
+    f_mean = get_mean_function(mean)
     
     #get inverse functions for all curves
     for i in range(0, len(x)):
@@ -20,14 +39,9 @@ def get_avg_func(x, y, points=1000):
     
     
     for i in range(0, len(y_avg)):#for every point in the new average curve...
-        element = 0
-        for j in range(0, len(x)):#for every curve: get the inverse function
-            element += f[j](y_avg[i])
-        x_avg.append(element/len(x))
+        x_avg.append(f_mean([f[j](y_avg[i]) for j in range(0, len(x))]))
     
-    '''for i in range(0, len(x)):
-        avg_dist.append(get_distance(x[i], y[i], x_avg, y_avg, show_direction=False)[2])'''
-    return lambda x: interp(x, x_avg, y_avg), x_avg#, avg_dist
+    return lambda x: interp(x, x_avg, y_avg), x_avg
             
 
 def get_func(x_list, y_list):
@@ -80,16 +94,18 @@ def predict_curve(time_str, curve_type='buy', base_curves=7):
     #get the data
     print max_time_str
     print min_time_str
-    prices, volumes, times = get_data(min_time_str, time_str, type=curve_type, specified_hour=hour)
+    print '----------------------'
+    prices, volumes, times = get_data(min_time_str, max_time_str, type=curve_type, specified_hour=hour)
+    print '----------------------'
     #get average curve
-    f_avg, x_avg = get_avg_func(volumes, prices, points=10000)
+    f_avg, x_avg = get_avg_func(volumes, prices, points=10000, mean='rms')
     
     dist = list()
     
     for i in range(0, len(volumes)):
         dist.append(get_distance(volumes[i], prices[i], x_avg, f_avg(x_avg), points=1000, show_direction = False)[0][2])
         #print dist[i]
-    return x_avg, f_avg, dist
+    return x_avg, f_avg, dist, volumes, prices
     
 
 
@@ -123,7 +139,7 @@ print dist[2]
 plt.show()'''
 
 prediction_time = '2011-03-11 12:00:00'    
-x_avg, f_avg, dist = predict_curve(prediction_time, curve_type='buy', base_curves=7)
+x_avg, f_avg, dist, base_volumes, base_prices = predict_curve(prediction_time, curve_type='buy', base_curves=7)
 
 start_date = prediction_time
 end_date = prediction_time
@@ -133,8 +149,8 @@ buy_prices, buy_volumes, _ = get_data(start_date, end_date, type='buy', specifie
 #last_prices, last_volumes, _ = get_data('2011-01-30 05:00:00', '2011-01-30 05:00:00', type='buy', specified_hour=None)
 #plt.plot(last_volumes[0], last_prices[0], 'go')
 #x = [x+1359.95 for x in buy_volumes[0]]
-plt.plot(x_avg, f_avg(x_avg), 'b-', label='Predicted')
-plt.plot(buy_volumes[0], buy_prices[0], 'r-', label='Actual')
+plt.plot(x_avg, f_avg(x_avg), 'r-', label='Predicted')
+plt.plot(buy_volumes[0], buy_prices[0], 'g-', label='Actual')
 #plt.plot(x, buy_prices[0], 'r-')
 plt.legend(loc='best')
 plt.title("Buy curve 2011-03-11 12:00:00")
@@ -142,5 +158,7 @@ plt.plot()
 for i in range(0, len(dist)): print 'avg - ' + str(i) +' '+ str(dist[i])
 print '----------------'
 print get_distance(buy_volumes[0], buy_prices[0], x_avg, f_avg(x_avg), points=1000, show_direction=False)[0][2]
+for i in range(0, len(base_volumes)):
+    plt.plot(base_volumes[i], base_prices[i], 'b-', linewidth=0.2)
 plt.show()
 
