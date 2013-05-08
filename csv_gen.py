@@ -28,12 +28,12 @@ def write_csv(start_date, end_date, curve_type='buy'):
 def write_sys_prices(start_date, end_date):
     #get data
     buy_prices, buy_volumes, times = get_data(start_date, end_date, type='buy')
-    #sell_prices, sell_volumes, _ = get_data(start_date, end_date, type='sell')
+    sell_prices, sell_volumes, _ = get_data(start_date, end_date, type='sell')
     sys_prices = list()
     
     for i in range(0, len(buy_prices)):
-        #system_price = get_intersection_point(buy_volumes[i], buy_prices[i], sell_volumes[i], sell_prices[i])[1]#Only sys price is necessary
-        #sys_prices.append(round(system_price, 3))
+        system_price = get_intersection_point(buy_volumes[i], buy_prices[i], sell_volumes[i], sell_prices[i])[1]#Only sys price is necessary
+        sys_prices.append(round(system_price, 3))
         '''print get_intersection_point(buy_volumes[i], buy_prices[i], sell_volumes[i], sell_prices[i])
         print buy_volumes[i]
         print buy_prices[i]
@@ -46,17 +46,29 @@ def write_sys_prices(start_date, end_date):
     #plt.show()
     
     
-    with open('sys_price_times_2012.csv', 'wb') as csvfile:
+    with open('time_sys_price.csv', 'wb') as csvfile:
         wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
         #wr.writerow(["time", "system_price"])
-        for i in range(0, len(times)):#sys_prices)):
+        for i in range(0, len(sys_prices)):
             #print item
-            wr.writerow([times[i][0]])#, sys_prices[i]])
+            wr.writerow([times[i][0], sys_prices[i]])
         csvfile.close()
     print "write_sys_price:Done"
+    
 ###############################
 curve_type = 'sell'
-start_date = '2012-01-01 00:00:00'
-end_date = '2012-06-16 21:00:00'
+start_date = '2011-01-01 00:00:00'
+end_date = '2012-12-31 23:00:00'
 
-write_sys_prices(start_date, end_date)
+#write_sys_prices(start_date, end_date)
+prices = list()
+with open("time_sys_price.csv", "rb") as csvfile:
+    reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+    for row in reader:
+        prices.append(row[1]+'\n')
+    csvfile.close()
+        
+with open('prices.txt', 'w') as file:
+    file.writelines(prices)
+    file.close()
+    print "Done"

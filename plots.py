@@ -22,14 +22,14 @@ def plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_i
         
         if show_intersections == True:
    
-            intersect_x, intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell, time=str(times[i][0]))
+            intersect_x, intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell, time=str(times[i]))
             plt.plot(intersect_x, intersect_y, 'go')
             
         plt.plot(x_buy, f_buy(x_buy), 'b-')#, linewidth=0.2, markersize=0.1)
         plt.plot(x_sell, f_sell(x_sell), 'r-')
         plt.annotate(str(intersect_x[0])+ ' | ' + str(intersect_y[0]), xy=(intersect_x, intersect_y),
                      xytext=(intersect_x-3000, intersect_y-100))
-        plt.plot(48500, 75.34, 'ro')
+        #plt.plot(41500, 80.16, 'ro')
     
     plt.yticks(np.arange(-200, 2000, 100.0))
     plt.grid()
@@ -75,8 +75,8 @@ def plot_time_price(times, prices):
     show()
     
 
-def plot_time_volume():
-    pass
+def plot_time_volume(times, volumes):
+    return plot_time_price(times, volumes)
 
 def plot_time_curve_length():
     pass
@@ -138,28 +138,56 @@ def calculate_offset(buy_prices, buy_volumes, sell_prices, sell_volumes, actual_
     x_sell = [r for r in sell_volumes[0]]
     y_sell = [r for r in sell_prices[0]]
     
-    offset_step=5
+    #check which way we should go along x-axis - positive or negative
+    offset_step=1
     i=1
+    
+    _, original_intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell)
+    
+    x_sell_modified = [r+offset_step for r in x_sell]
+    _, intersect_y = get_intersection_point(x_buy, y_buy, x_sell_modified, y_sell)
+    if abs(actual_price - intersect_y) > abs(actual_price - original_intersect_y):
+        offset_step = -1
+    last_offset = min(abs(actual_price - intersect_y), abs(actual_price - original_intersect_y))
+    
+    #start shifting the supply curve in the appropriate direction
     while True:
         x_sell_modified = [r+(offset_step*i) for r in x_sell]
         _, intersect_y = get_intersection_point(x_buy, y_buy, x_sell_modified, y_sell)
-        if abs(intersect_y-actual_price) < 1:
+        
+        current_offset = abs(actual_price- intersect_y)
+        if (current_offset < 0.2 or last_offset < current_offset):
             break
+        else:
+            last_offset = current_offset
         i+=1
+    print offset_step*i
     return offset_step*i
     
 ########################################
-start_date = '2011-02-23 08:00:00'
-end_date = '2011-02-23 08:00:00'
-hour = '01:00:00'
+start_date = '2011-02-21 23:00:00'
+end_date = '2011-02-21 23:00:00'
+#end_date = '2011-07-23 18:00:00'
+#hour = '01:00:00'
 
 buy_prices, buy_volumes, times = get_data(start_date, end_date, type='buy', specified_hour = None)
 sell_prices, sell_volumes, _ = get_data(start_date, end_date, type='sell', specified_hour = None)
 
 #volumes, prices = get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes)
 #plot_time_price(times, prices)
-#plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
-print calculate_offset(buy_prices, buy_volumes, sell_prices, sell_volumes, 75.34)
+plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
+'''csv_times, csv_prices = get_times_prices_from_csv("nps_sys_prices_real.csv")
+volume_offsets = list()
+for i in range(0, len(csv_times)):
+    print str(csv_times[i])
+    volume_offsets.append(calculate_offset(buy_prices, buy_volumes, sell_prices, sell_volumes, float(csv_prices[i])))
+    print '---------'
+ 
+with open('volume_offsets_2011.txt', 'w') as file:
+    for item in volume_offsets:
+        file.write(str(item)+'\n')
+    file.close()'''
+#plot_times_prices(csv_times, volume_offsets)
 '''for i in range(0, len(buy_volumes)):
     plt.plot(buy_volumes[i], buy_prices[i], 'b-')
     plt.annotate(str(times[i][0].hour), 
