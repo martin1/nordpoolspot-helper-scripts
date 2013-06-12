@@ -59,19 +59,19 @@ def plot_time_price(times, prices):
     ax.grid(True)
     '''max'''
     ax.plot_date(times[prices.index(max(prices))], max(prices), 'ro')
-    ax.annotate(str(times[prices.index(max(prices))][0])+'| '+ str(round(max(prices)[0], 2)), 
+    ax.annotate(str(times[prices.index(max(prices))])+'| '+ str(round(max(prices)[0], 2)), 
                 xy=(times_num[prices.index(max(prices))], max(prices)),
                 xytext=(times_num[prices.index(max(prices))], max(prices)))
     '''min'''
     ax.plot_date(times[prices.index(min(prices))], min(prices), 'ro')
-    ax.annotate(str(times[prices.index(min(prices))][0])+'| '+ str(round(min(prices)[0], 2)), 
+    ax.annotate(str(times[prices.index(min(prices))])+'| '+ str(round(min(prices)[0], 2)), 
                 xy=(times_num[prices.index(min(prices))], min(prices)),
                 xytext=(times_num[prices.index(min(prices))], min(prices)))
     fig.autofmt_xdate()
     #plot csv times and prices
     
-    csv_times, csv_prices = get_times_prices_from_csv('sys_prices_real_2012.csv')
-    ax.plot_date(csv_times, csv_prices, 'r-')
+    #csv_times, csv_prices = get_times_prices_from_csv('sys_prices_real_2012.csv')
+    #ax.plot_date(csv_times, csv_prices, 'r-')
     show()
     
 
@@ -103,21 +103,21 @@ def get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes):
         y_buy = [r for r in buy_prices[i]]
         
         x_sell = [r for r in sell_volumes[i]]
-        x_sell_4900 = [r+4900 for r in x_sell]
+        #x_sell_4900 = [r+4900 for r in x_sell]
         
         y_sell = [r for r in sell_prices[i]]
         f_buy = lambda x: interp(x, x_buy, y_buy)
         f_sell = lambda x: interp(x, x_sell, y_sell)
         
         intersect_x, intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell)
-        modified_intersect_x, modified_intersect_y = get_intersection_point(x_buy, y_buy, x_sell_4900, y_sell, time=str(times[i][0]))
+        #modified_intersect_x, modified_intersect_y = get_intersection_point(x_buy, y_buy, x_sell_4900, y_sell, time=str(times[i]))
         
         volumes.append(intersect_x)
         
-        if intersect_y > 1000:
+        '''if intersect_y > 1000:
             prices.append(modified_intersect_y)
-        else:
-            prices.append(intersect_y)
+        else:'''
+        prices.append(intersect_y)
     
     return volumes, prices
         
@@ -132,6 +132,7 @@ def get_times_prices_from_csv(csvfile):
     print csv_prices[0]
     return csv_times, csv_prices
 
+'''Deprecated due to corrections applied to data in data module
 def calculate_offset(buy_prices, buy_volumes, sell_prices, sell_volumes, actual_price):
     x_buy = [r for r in buy_volumes[0]]
     y_buy = [r for r in buy_prices[0]]
@@ -162,20 +163,22 @@ def calculate_offset(buy_prices, buy_volumes, sell_prices, sell_volumes, actual_
             last_offset = current_offset
         i+=1
     print offset_step*i
-    return offset_step*i
+    return offset_step*i'''
     
 ########################################
-start_date = '2011-02-21 23:00:00'
-end_date = '2011-02-21 23:00:00'
+start_date = '2012-12-31 00:00:00'
+end_date = '2013-05-01 23:00:00'
 #end_date = '2011-07-23 18:00:00'
 #hour = '01:00:00'
 
-buy_prices, buy_volumes, times = get_data(start_date, end_date, type='buy', specified_hour = None)
-sell_prices, sell_volumes, _ = get_data(start_date, end_date, type='sell', specified_hour = None)
-
-#volumes, prices = get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes)
-#plot_time_price(times, prices)
-plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
+buy_prices, buy_volumes, times = get_curve(start_date, end_date, type='buy', specified_hour = None)
+sell_prices, sell_volumes, _ = get_curve(start_date, end_date, type='sell', specified_hour = None)
+#print buy_volumes
+#print times
+volumes, prices = get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes)
+#print prices
+plot_time_price(times, prices)
+#plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
 '''csv_times, csv_prices = get_times_prices_from_csv("nps_sys_prices_real.csv")
 volume_offsets = list()
 for i in range(0, len(csv_times)):
