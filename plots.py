@@ -166,19 +166,19 @@ def calculate_offset(buy_prices, buy_volumes, sell_prices, sell_volumes, actual_
     return offset_step*i'''
     
 ########################################
-start_date = '2012-12-31 00:00:00'
-end_date = '2013-05-01 23:00:00'
+start_date = '2011-01-01 00:00:00'
+end_date = '2011-01-01 00:00:00'
 #end_date = '2011-07-23 18:00:00'
 #hour = '01:00:00'
 
 buy_prices, buy_volumes, times = get_curve(start_date, end_date, type='buy', specified_hour = None)
 sell_prices, sell_volumes, _ = get_curve(start_date, end_date, type='sell', specified_hour = None)
-#print buy_volumes
+print buy_volumes
 #print times
 volumes, prices = get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes)
-#print prices
-plot_time_price(times, prices)
-#plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
+print prices
+#plot_time_price(times, prices)
+plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
 '''csv_times, csv_prices = get_times_prices_from_csv("nps_sys_prices_real.csv")
 volume_offsets = list()
 for i in range(0, len(csv_times)):

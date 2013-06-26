@@ -28,11 +28,13 @@ def get_curve(start_time, end_time, type='buy', specified_hour=None):
     volumes = [r[1] for r in result]
     prices = [r[2] for r in result]
     adjustments = [r[3] for r in result]
+    #print adjustments
+    
     #make horizontal adjustments to curve data
     
-    for n in range(0, len(volumes)):
+    '''for n in range(0, len(volumes)):
         for i in range(0, len(volumes[n])):
-            volumes[n][i] += float(adjustments[n])
+            volumes[n][i] += float(adjustments[n])'''
     print "Data done"
     return prices, volumes, times
 
@@ -95,7 +97,3 @@ def get_chart_data(start_date, end_date):
     cur.execute("select * from chart_data where time between '" + start_date + "' and '" + end_date + "';")
     return cur.fetchall()
     
-#################
-a = get_curve('2011-01-01 01:00:00', '2011-01-01 01:00:00', type = 'sell')
-b = get_data('2011-01-01 01:00:00', '2011-01-01 01:00:00', type = 'sell')
-print a == b
