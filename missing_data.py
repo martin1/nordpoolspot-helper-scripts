@@ -1,7 +1,7 @@
 import datetime as d
 from data import *
 
-def generate_dates(start_date, end_date):
+def generate_time_interval(start_date, end_date):
     times = list()
     td = d.timedelta(hours=1)
     current_date = start_date
@@ -19,7 +19,7 @@ end = d.datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
    
 print start == end
      
-times = generate_dates(start, end)
+times = generate_time_interval(start, end)
 
 _, _, times_db = get_curve(start_time, end_time, type='buy')
 

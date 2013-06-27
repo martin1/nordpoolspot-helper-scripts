@@ -92,34 +92,6 @@ def plot_time_min_max_volume():
 
 def plot_time_volume_diff():
     pass
-
-def get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes):
-    
-    prices = list()
-    volumes = list()
-    
-    for i in range(0, len(buy_prices)):
-        x_buy = [r for r in buy_volumes[i]]
-        y_buy = [r for r in buy_prices[i]]
-        
-        x_sell = [r for r in sell_volumes[i]]
-        #x_sell_4900 = [r+4900 for r in x_sell]
-        
-        y_sell = [r for r in sell_prices[i]]
-        f_buy = lambda x: interp(x, x_buy, y_buy)
-        f_sell = lambda x: interp(x, x_sell, y_sell)
-        
-        intersect_x, intersect_y = get_intersection_point(x_buy, y_buy, x_sell, y_sell)
-        #modified_intersect_x, modified_intersect_y = get_intersection_point(x_buy, y_buy, x_sell_4900, y_sell, time=str(times[i]))
-        
-        volumes.append(intersect_x)
-        
-        '''if intersect_y > 1000:
-            prices.append(modified_intersect_y)
-        else:'''
-        prices.append(intersect_y)
-    
-    return volumes, prices
         
 def get_times_prices_from_csv(csvfile):
     csv_times = list()
@@ -175,8 +147,6 @@ buy_prices, buy_volumes, times = get_curve(start_date, end_date, type='buy', spe
 sell_prices, sell_volumes, _ = get_curve(start_date, end_date, type='sell', specified_hour = None)
 print buy_volumes
 #print times
-volumes, prices = get_system_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes)
-print prices
 #plot_time_price(times, prices)
 plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
 '''csv_times, csv_prices = get_times_prices_from_csv("nps_sys_prices_real.csv")

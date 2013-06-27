@@ -1,20 +1,45 @@
 from data import *
+import datetime
 
-start_date = '2011-01-01 01:00:00'
-end_date = '2011-01-01 01:00:00'
+def get_sysprice_list(start_time, end_time, frequency='hourly'):
+#frequency one of [hourly, daily, monthly]
 
-buy_prices, buy_volumes, times = get_curve(start_date, end_date, type='buy', specified_hour = None)
-sell_prices, sell_volumes, _ = get_curve(start_date, end_date, type='sell', specified_hour = None)
+    _ , sys_prices, times = get_system_price_volume(start_time, end_time)
+    
+    def get_daily_sys_prices_times():
+        pass
+    
+    if frequency == 'daily':
+        daily_sys_prices = list()
+        daily_sys_price = 0
+        #convert times to dates
+        times = [time.date() for time in times]
+        for i in range(0, len(times)-1):
+            if times[i] == times[i+1]:
+                daily_sys_price += sys_prices[i]
+                #last element in list
+                '''if i+1 == len(times):
+                    daily_sys_price += sys_prices[i+1]'''
+            elif times[i] != times[i+1]:
+                daily_sys_price += sys_prices[i]
+                #Add hour 23-00 price
+                #daily_sys_price += sys_prices[i]
+                daily_sys_prices.append(round(daily_sys_price/times.count(times[i]),2))
+                daily_sys_price = 0 
+            if i+1 == len(times)-1:#last price in list
+                print "last"
+                daily_sys_price += sys_prices[i+1]
+                daily_sys_prices.append(round(daily_sys_price/times.count(times[i+1]),2))   
+        #remove duplicate date entries 
+        times = sorted(list(set(times)))
+        print daily_sys_prices
+        print times
 
-buy_prices1, buy_volumes1, times1 = get_data(start_date, end_date, type='buy', specified_hour = None)
-sell_prices1, sell_volumes1, _ = get_data(start_date, end_date, type='sell', specified_hour = None)
+    elif frequency == 'monthly':
+        pass
+        
+    
+    #return sysprice_list
 
-with open('/home/martin/out.txt', 'w') as file:
-    file.write(str(sell_volumes[0]) + "\n")
-    file.write(str(sell_volumes1[0]))
-    file.close()
-    print "buy_volumes: " + str(buy_volumes[0] == buy_volumes1[0])
-    print "buy_prices: " + str(buy_prices[0] == buy_prices1[0])
-    print "sell_volumes: " + str(sell_volumes[0] == sell_volumes1[0])
-    print "sell_prices: " + str(sell_prices[0] == sell_prices1[0])
-    print "Done"
+get_sysprice_list('2011-01-01 00:00:00', '2011-01-04 23:00:00', frequency='daily')
+#print datetime.date(datetime.datetime(2013,6,26,12,0).year, datetime.datetime(2013,6,26,12,0).month, 1)
