@@ -20,7 +20,7 @@ def get_curve(start_time, end_time, type='buy', specified_hour=None):
         query += "and extract(hour, time) = " + specified_hour + "'"
         
     #order the results
-    #query += "ORDER BY buy_volumes asc"
+    query += "ORDER BY time asc"
     
     cur.execute(query)
     result = cur.fetchall()
@@ -43,7 +43,7 @@ def get_intersection_point(buy_x_list, buy_y_list, sell_x_list, sell_y_list, tim
     f_buy = lambda x: interp(x, buy_x_list, buy_y_list)
     f_sell = lambda x: interp(x, sell_x_list, sell_y_list)
         
-    intersect_x = fsolve(lambda x : f_sell(x) - f_buy(x), 10000)
+    intersect_x = fsolve(lambda x : f_sell(x) - f_buy(x), 1000)
     return intersect_x, f_buy(intersect_x)
 
 def get_system_price_volume(start_time, end_time):

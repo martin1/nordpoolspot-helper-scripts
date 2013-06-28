@@ -138,14 +138,15 @@ def calculate_offset(buy_prices, buy_volumes, sell_prices, sell_volumes, actual_
     return offset_step*i'''
     
 ########################################
-start_date = '2011-01-01 00:00:00'
-end_date = '2011-01-01 00:00:00'
+start_date = '2011-08-07 00:00:00'
+end_date = '2011-08-07 00:00:00'
 #end_date = '2011-07-23 18:00:00'
 #hour = '01:00:00'
 
 buy_prices, buy_volumes, times = get_curve(start_date, end_date, type='buy', specified_hour = None)
 sell_prices, sell_volumes, _ = get_curve(start_date, end_date, type='sell', specified_hour = None)
-print buy_volumes
+print sell_prices
+print sell_volumes
 #print times
 #plot_time_price(times, prices)
 plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
