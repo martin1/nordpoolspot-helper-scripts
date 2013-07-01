@@ -145,8 +145,10 @@ end_date = '2011-08-07 00:00:00'
 
 buy_prices, buy_volumes, times = get_curve(start_date, end_date, type='buy', specified_hour = None)
 sell_prices, sell_volumes, _ = get_curve(start_date, end_date, type='sell', specified_hour = None)
-print sell_prices
-print sell_volumes
+print sell_prices[0]
+#print sell_prices[1]
+print sell_volumes[0]
+#print sell_volumes[1]
 #print times
 #plot_time_price(times, prices)
 plot_price_volume(buy_prices, buy_volumes, sell_prices, sell_volumes, show_intersections=True)
