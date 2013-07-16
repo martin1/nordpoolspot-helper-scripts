@@ -1,6 +1,7 @@
 from data import *
 import datetime
 import calendar
+import pandas as pd
 
 def get_daily_sys_prices_times(hourly_sys_prices, hourly_times):
     d = {}
@@ -25,10 +26,11 @@ def get_daily_sys_prices_times(hourly_sys_prices, hourly_times):
     
     return [d[key] for key in sorted(d.keys())], sorted(d.keys())
 
-def get_sysprice_list(start_time, end_time, frequency='hourly'):
+'''def get_sysprice_list2(start_time, end_time, frequency='hourly'):
 #frequency one of [hourly, daily, monthly]
 
     _ , hourly_sys_prices, hourly_times = get_system_price_volume(start_time, end_time)
+    sys_prices, times = hourly_sys_prices, hourly_times
     
     if frequency == 'daily':
         sys_prices, times = get_daily_sys_prices_times(hourly_sys_prices, hourly_times)
@@ -53,9 +55,9 @@ def get_sysprice_list(start_time, end_time, frequency='hourly'):
     elif frequency == 'monthly':
         daily_sys_prices, daily_times = get_daily_sys_prices_times(hourly_sys_prices, hourly_times)
         
-        '''for i in range(0, len(daily_times)):
+        for i in range(0, len(daily_times)):
             print daily_times[i]
-            print daily_sys_prices[i]'''
+            print daily_sys_prices[i]
         
         monthly_sys_price = 0
         d = {}
@@ -75,6 +77,46 @@ def get_sysprice_list(start_time, end_time, frequency='hourly'):
     for i in range(0, len(times)):
         print times[i]
         print sys_prices[i]
+    return times, sys_prices'''
 
-get_sysprice_list('2011-08-01 00:00:00', '2011-08-07 23:00:00', frequency='weekly')
-#print datetime.date(datetime.datetime(2013,6,26,12,0).year, datetime.datetime(2013,6,26,12,0).month, 1)
+def get_sysprice_list(start_time, end_time, frequency='hourly'):
+    #frequency one of [hourly, daily, monthly]
+
+    _ , sys_prices, times = get_system_price_volume(start_time, end_time)
+    
+    ts = pd.Series(sys_prices, index=times)
+    resampling_frequency = None
+    label_offset = None
+    
+    if frequency == 'daily':
+        resampling_frequency = 'D'
+    
+    elif frequency == 'weekly':
+        start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+        end_time = datetime.datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+
+        if start_time.date().weekday() != 0:
+            raise ValueError(str(start_time.date())+ " is a " + start_time.date().strftime('%A') + ". start_date must be a Monday.")
+        if end_time.date().weekday() != 6:
+            raise ValueError(str(end_time.date())+ " is a " + end_time.date().strftime('%A') + ". end_date must be a Sunday.")
+        resampling_frequency = 'W'     
+
+    elif frequency == 'monthly':
+        resampling_frequency = 'M'
+    
+    if resampling_frequency is not None:
+        #Resampling must be done
+        return ts.resample(resampling_frequency, how='mean', kind='period')
+    else:
+        #Resampling is not necessary
+        return ts
+
+#get_sysprice_list('2013-01-01 00:00:00', '2013-01-31 23:00:00', frequency='monthly')
+ts = get_sysprice_list('2013-01-01 00:00:00', '2013-01-31 23:00:00', frequency='monthly')
+print ts
+'''with open('/home/martin/monthly_sys_prices.txt', 'a') as f:
+    for i in range(0, len(times)):
+        f.write(str(times[i]) + ' ' + str(prices[i]) + '\n')
+    f.close()
+print "All done"'''
+#print datetime.date(datetime.datetim(2013,6,26,12,0).year, datetime.datetime(2013,6,26,12,0).month, 1)
