@@ -2,6 +2,9 @@ from data import *
 import datetime
 import calendar
 import pandas as pd
+import matplotlib.pyplot as plt
+
+
 
 def get_daily_sys_prices_times(hourly_sys_prices, hourly_times):
     d = {}
@@ -85,8 +88,6 @@ def get_sysprice_list(start_time, end_time, frequency='hourly'):
     _ , sys_prices, times = get_system_price_volume(start_time, end_time)
     
     ts = pd.Series(sys_prices, index=times)
-    resampling_frequency = None
-    label_offset = None
     
     if frequency == 'daily':
         resampling_frequency = 'D'
@@ -103,17 +104,19 @@ def get_sysprice_list(start_time, end_time, frequency='hourly'):
 
     elif frequency == 'monthly':
         resampling_frequency = 'M'
-    
-    if resampling_frequency is not None:
-        #Resampling must be done
-        return ts.resample(resampling_frequency, how='mean', kind='period')
-    else:
+
+    if frequency == 'hourly':
         #Resampling is not necessary
         return ts
+    else:
+        return ts.resample(resampling_frequency, how='mean', kind='period') 
 
 #get_sysprice_list('2013-01-01 00:00:00', '2013-01-31 23:00:00', frequency='monthly')
-ts = get_sysprice_list('2013-01-01 00:00:00', '2013-01-31 23:00:00', frequency='monthly')
-print ts
+ts = get_sysprice_list('2012-12-31 00:00:00', '2013-02-03 23:00:00', frequency='daily')
+pd.rolling_mean(ts, 3).plot(style='k--')
+ts.plot(style='k')
+plt.show()
+print "All Done"
 '''with open('/home/martin/monthly_sys_prices.txt', 'a') as f:
     for i in range(0, len(times)):
         f.write(str(times[i]) + ' ' + str(prices[i]) + '\n')
